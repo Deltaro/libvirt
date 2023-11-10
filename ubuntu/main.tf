@@ -23,6 +23,10 @@ variable "private_key_path" {
   default     = "~/.ssh/id_rsa"
 }
 
+############################################################
+//-> Config Storage
+############################################################
+
 // fetch the latest ubuntu release image from their mirrors
 resource "libvirt_volume" "os_image" {
   name   = "${var.hostname}-os_image"
@@ -30,6 +34,18 @@ resource "libvirt_volume" "os_image" {
   source = "./jammy-server-cloudimg-amd64.img"
   format = "qcow2"
 }
+
+// Resize qcow2 
+resource "libvirt_volume" "disk_resized" {
+  name           = "${var.hostname}-disk"
+  base_volume_id = libvirt_volume.os_image.id
+  pool           = "default"
+  size           = var.diskBytes
+}
+
+############################################################
+//-> Config cloud init
+############################################################
 
 // Use CloudInit ISO to add ssh-key to the instance
 resource "libvirt_cloudinit_disk" "commoninit" {
@@ -74,7 +90,7 @@ resource "libvirt_domain" "domain-ubuntu" {
   #qemu_agent = true
 
   disk {
-    volume_id = libvirt_volume.os_image.id
+    volume_id = libvirt_volume.disk_resized.id
   }
 
   network_interface {
