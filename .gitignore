@@ -2,4 +2,4 @@
 **.terraform*
 **.qcow2
 **.img
-**.tfstate*
+**.*tfstate*
