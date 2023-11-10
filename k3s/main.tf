@@ -44,8 +44,8 @@ data "template_file" "user_data" {
   vars = {
     hostname             = var.hostname
     fqdn                 = "${var.hostname}.${var.domain}"
-    public_key           = file("/home/deltaro/.ssh/id_rsa.pub")
-    terraform_public_key = file("/home/deltaro/.ssh/terraform_rsa.pub")
+    public_key           = file("~/.ssh/id_rsa.pub")
+    terraform_public_key = file("~/.ssh/terraform_rsa.pub")
   }
 }
 
