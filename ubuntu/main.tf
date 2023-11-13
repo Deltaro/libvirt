@@ -11,18 +11,6 @@ provider "libvirt" {
   uri = "qemu:///system"
 }
 
-// variables that can be overriden
-variable "hostname" { default = "test" }
-variable "domain" { default = "example.com" }
-variable "ip_type" { default = "dhcp" } # dhcp is other valid type
-variable "memoryMB" { default = 1024 * 1 }
-variable "cpu" { default = 1 }
-variable "diskBytes" { default = 1024*1024*1024*5 }
-variable "private_key_path" {
-  description = "Path to the private SSH key, used to access the instance."
-  default     = "~/.ssh/id_rsa"
-}
-
 ############################################################
 //-> Config Storage
 ############################################################
@@ -40,7 +28,7 @@ resource "libvirt_volume" "disk_resized" {
   name           = "${var.hostname}-disk"
   base_volume_id = libvirt_volume.os_image.id
   pool           = "default"
-  size           = var.diskBytes
+  size           = 1024 * 1024 * 1024 * var.diskGB
 }
 
 ############################################################
@@ -85,7 +73,7 @@ data "template_file" "network_config" {
 resource "libvirt_domain" "domain-ubuntu" {
   # domain name in libvirt, not hostname
   name   = var.hostname
-  memory = var.memoryMB
+  memory = 1024 * var.ramGB
   vcpu   = var.cpu
   #qemu_agent = true
 
