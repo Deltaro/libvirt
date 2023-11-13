@@ -119,6 +119,11 @@ resource "libvirt_domain" "domain-ubuntu" {
     interpreter = ["/bin/bash", "-c"]
     command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu -i ${self.network_interface.0.addresses.0}, -e k3s_version=v1.26.9+k3s1 -e master_ip=${self.network_interface.0.addresses.0} --private-key ${var.private_key_path} k3s-ansible/site.yml"
   }
+
+  provisioner "local-exec" {
+    interpreter = ["/bin/bash", "-c"]
+    command = "mv ~/.kube/${self.network_interface.0.addresses.0}/etc/rancher/k3s/k3s.yaml ~/.kube/k3s_config; export KUBECONFIG=~/.kube/k3s_config"
+  }
 }
 
 output "ips" {
