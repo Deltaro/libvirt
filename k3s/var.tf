@@ -21,7 +21,7 @@ variable "ramGB" {
 
 variable "diskGB" {
   type = number
-  default = 3
+  default = 5
 
 }
 
