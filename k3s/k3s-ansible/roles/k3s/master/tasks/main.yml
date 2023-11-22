@@ -59,18 +59,30 @@
     owner: "{{ ansible_user }}"
     mode: "u=rw,g=,o="
 
-- name: Store file into ~/.kube/k3s_config on local host
-  ansible.builtin.fetch:
-    src: /etc/rancher/k3s/k3s.yaml
-    dest: ~/.kube/
-    flat: k3s_config
-
 - name: Replace https://localhost:6443 by https://master-ip:6443
   command: >-
     k3s kubectl config set-cluster default
       --server=https://{{ master_ip }}:6443
       --kubeconfig ~{{ ansible_user }}/.kube/config
   changed_when: true
+
+- name: Copy kube config for modification inot /tmp
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /tmp/config
+    remote_src: yes
+
+- name: Replace localhost with master_ip
+  replace:
+    path: /tmp/config
+    regexp: '127.0.0.1'
+    replace: '{{ master_ip }}'
+
+- name: Store file into ~/.kube/k3s_config on local host
+  fetch:
+    src: /tmp/config
+    dest: ~/.kube/k3s_config
+    flat: yes
 
 - name: Create kubectl symlink
   file:
