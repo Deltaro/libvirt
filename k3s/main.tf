@@ -75,7 +75,7 @@ resource "libvirt_domain" "domain-ubuntu" {
   name   = var.hostname
   memory = 1024 * var.ramGB
   vcpu   = var.cpu
-  #qemu_agent = true
+  qemu_agent = false
 
   disk {
     volume_id = libvirt_volume.disk_resized.id

@@ -3,3 +3,6 @@
 */terraform.*
 **.qcow2
 **.img
+terraform.tfstate
+k3s/terraform.tfstate
+k3s/terraform.tfstate.backup
